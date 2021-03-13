@@ -17,7 +17,7 @@ def sigmoid(x):
     """
 
     ### YOUR CODE HERE (~1 Line)
-
+    s = 1 / (1 + np.exp(-x))
     ### END YOUR CODE
 
     return s
@@ -119,6 +119,25 @@ def negSamplingLossAndGradient(
     ### YOUR CODE HERE (~10 Lines)
 
     ### Please use your implementation of sigmoid in here.
+
+    # y_pred = sigmoid(np.dot(outsideVectors[outsideWordIdx], centerWordVec))
+    # loss = -np.log(y_pred)
+    loss = 0
+    gradCenterVec = np.zeros_like(centerWordVec)
+    gradOutsideVecs = np.zeros_like(outsideVectors)
+    for i, index in enumerate(indices):
+        # t = 1 if i == 0 else 0
+        # y_pred = sigmoid(np.dot(outsideVectors[index], centerWordVec))
+        # loss += -(t * np.log(y_pred) + (1 - t) * np.log(1 - y_pred))
+        y_pred = sigmoid(np.dot(outsideVectors[index], centerWordVec))
+        if i == 0:
+            loss += -np.log(y_pred)
+            gradCenterVec += (y_pred - 1) * outsideVectors[index]
+            gradOutsideVecs[index] += (y_pred - 1) * centerWordVec
+        else:
+            loss += -np.log(1 - y_pred)
+            gradCenterVec += y_pred * outsideVectors[index]
+            gradOutsideVecs[index] += y_pred * centerWordVec
 
     ### END YOUR CODE
 
